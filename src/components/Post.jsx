@@ -30,6 +30,18 @@ export function Post({author, content, publishedAt}) {
     function handleNewCommentText(event) {
         setNewCommentText(event.target.value);
     }
+    
+    function onDeleteComment(comment) {
+        // Remove o comentário da lista de comentários
+        setComments(comments.filter(comments => comments !== comment));
+    }
+
+    function handleNewCommentInvalid() {
+        alert('O comentário não pode ser vazio');
+    }
+
+    const isNewCommentEmpty = newCommentText.length == 0;
+
     return (
     <>
         <article className={styles.post}>
@@ -52,8 +64,8 @@ export function Post({author, content, publishedAt}) {
                     }
 
                     if (line.type === 'link') {
-                        return <p>
-                            <a key={line.content} href={line.content}>{line.content}</a>
+                        return <p key={line.content}>
+                            <a href={line.content}>{line.content}</a>
                         </p>
                     }
 
@@ -68,17 +80,23 @@ export function Post({author, content, publishedAt}) {
                     name="comment"
                     placeholder="Deixe um comentário"
                     value={newCommentText}
-                    onChange={handleNewCommentText} 
+                    onChange={handleNewCommentText}
+                    onInvalid={handleNewCommentInvalid}
+                    required
                 />
                 <footer>
-                    <button type="submit">Publicar</button>
+                    <button type="submit" disabled={isNewCommentEmpty}>Publicar</button>
                 </footer>
             </form>
 
             <div className={styles.commentList}>
                 {
                     comments.map(comment => (
-                        <Comment key={comment} content={comment}/>
+                        <Comment 
+                            key={comment} 
+                            content={comment}
+                            onDeleteComment={() => onDeleteComment(comment)}
+                        />
                     ))
                 }
             </div>
